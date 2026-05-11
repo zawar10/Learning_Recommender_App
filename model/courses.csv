@@ -1,0 +1,31 @@
+course_id,course_name,category,difficulty,duration_hours,description,features
+1,Python Basics,Programming,Beginner,10,Learn Python syntax variables loops and functions,Learn Python syntax variables loops and functions Programming Beginner programming
+2,Python OOP,Programming,Intermediate,15,Object oriented programming classes inheritance polymorphism,Object oriented programming classes inheritance polymorphism Programming Intermediate programming
+3,Data Structures & Algorithms,Computer Science,Intermediate,20,Arrays trees graphs sorting searching algorithms complexity,Arrays trees graphs sorting searching algorithms complexity Computer Science Intermediate computer science
+4,SQL for Beginners,Database,Beginner,8,SQL queries joins aggregations database design fundamentals,SQL queries joins aggregations database design fundamentals Database Beginner database
+5,Advanced SQL,Database,Intermediate,12,Advanced queries stored procedures indexing optimization,Advanced queries stored procedures indexing optimization Database Intermediate database
+6,Machine Learning Fundamentals,Machine Learning,Intermediate,25,Supervised unsupervised learning regression classification clustering,Supervised unsupervised learning regression classification clustering Machine Learning Intermediate machine learning
+7,Deep Learning with TensorFlow,Deep Learning,Advanced,30,Neural networks CNN RNN LSTM TensorFlow Keras deep learning,Neural networks CNN RNN LSTM TensorFlow Keras deep learning Deep Learning Advanced deep learning
+8,NLP with Python,NLP,Advanced,28,Text processing sentiment analysis BERT transformers language models,Text processing sentiment analysis BERT transformers language models NLP Advanced nlp
+9,Computer Vision,Computer Vision,Advanced,32,Image classification object detection YOLO OpenCV neural networks,Image classification object detection YOLO OpenCV neural networks Computer Vision Advanced computer vision
+10,Data Visualization,Data Viz,Beginner,10,Matplotlib seaborn plotly interactive charts storytelling,Matplotlib seaborn plotly interactive charts storytelling Data Viz Beginner data viz
+11,Statistics for Data Science,Mathematics,Intermediate,18,Descriptive inferential statistics hypothesis testing distributions,Descriptive inferential statistics hypothesis testing distributions Mathematics Intermediate mathematics
+12,Linear Algebra,Mathematics,Intermediate,14,Vectors matrices eigenvalues transformations matrix decomposition,Vectors matrices eigenvalues transformations matrix decomposition Mathematics Intermediate mathematics
+13,Calculus for ML,Mathematics,Intermediate,12,Derivatives integrals optimization gradient descent backpropagation,Derivatives integrals optimization gradient descent backpropagation Mathematics Intermediate mathematics
+14,Probability & Bayesian Thinking,Mathematics,Intermediate,16,Probability distributions Bayes theorem conditional probability,Probability distributions Bayes theorem conditional probability Mathematics Intermediate mathematics
+15,Web Scraping,Programming,Beginner,8,BeautifulSoup Selenium requests parsing HTML data extraction,BeautifulSoup Selenium requests parsing HTML data extraction Programming Beginner programming
+16,Flask Web Development,Web Dev,Intermediate,20,Flask routing templates REST APIs authentication deployment,Flask routing templates REST APIs authentication deployment Web Dev Intermediate web dev
+17,Django REST APIs,Web Dev,Advanced,25,Django models serializers views authentication REST framework,Django models serializers views authentication REST framework Web Dev Advanced web dev
+18,Docker & Kubernetes,DevOps,Advanced,22,Containers orchestration microservices CI CD pipelines,Containers orchestration microservices CI CD pipelines DevOps Advanced devops
+19,Git & GitHub,Tools,Beginner,6,Version control branching merging pull requests collaboration,Version control branching merging pull requests collaboration Tools Beginner tools
+20,Cloud Computing (AWS),Cloud,Advanced,28,EC2 S3 Lambda RDS cloud architecture scalability AWS services,EC2 S3 Lambda RDS cloud architecture scalability AWS services Cloud Advanced cloud
+21,Power BI Dashboards,Data Viz,Intermediate,14,Business intelligence dashboards KPIs interactive reports Power BI,Business intelligence dashboards KPIs interactive reports Power BI Data Viz Intermediate data viz
+22,Tableau Essentials,Data Viz,Beginner,10,Visual analytics calculated fields charts dashboards Tableau,Visual analytics calculated fields charts dashboards Tableau Data Viz Beginner data viz
+23,Excel for Data Analysis,Data Viz,Beginner,8,Pivot tables VLOOKUP macros data cleaning charts analysis,Pivot tables VLOOKUP macros data cleaning charts analysis Data Viz Beginner data viz
+24,R Programming,Programming,Intermediate,18,R syntax ggplot2 dplyr tidyverse statistical computing,R syntax ggplot2 dplyr tidyverse statistical computing Programming Intermediate programming
+25,Time Series Forecasting,Machine Learning,Advanced,22,ARIMA SARIMA Prophet LSTM forecasting seasonality trends,ARIMA SARIMA Prophet LSTM forecasting seasonality trends Machine Learning Advanced machine learning
+26,Recommender Systems,Machine Learning,Advanced,26,Collaborative filtering content-based matrix factorization SVD,Collaborative filtering content-based matrix factorization SVD Machine Learning Advanced machine learning
+27,Reinforcement Learning,Machine Learning,Advanced,30,Q-learning policy gradient actor critic Gym environments rewards,Q-learning policy gradient actor critic Gym environments rewards Machine Learning Advanced machine learning
+28,Ethical AI & Bias,AI Ethics,Intermediate,10,Algorithmic bias fairness privacy transparency responsible AI,Algorithmic bias fairness privacy transparency responsible AI AI Ethics Intermediate ai ethics
+29,Big Data with Spark,Big Data,Advanced,28,Hadoop MapReduce Spark DataFrames streaming processing scalability,Hadoop MapReduce Spark DataFrames streaming processing scalability Big Data Advanced big data
+30,MLOps & Deployment,MLOps,Advanced,24,Model serving monitoring CI CD pipelines Docker Kubernetes MLflow,Model serving monitoring CI CD pipelines Docker Kubernetes MLflow MLOps Advanced mlops
