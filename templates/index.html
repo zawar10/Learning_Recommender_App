@@ -408,6 +408,121 @@
             margin-bottom: 8px;
         }
 
+        /* Visible descriptions + read more */
+        .card-desc {
+            font-size: 0.9rem;
+            line-height: 1.55;
+            color: var(--text-muted);
+            margin-top: 10px;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 4;
+            overflow: hidden;
+        }
+
+        .card-desc.is-expanded {
+            -webkit-line-clamp: unset;
+            display: block;
+        }
+
+        .read-more-btn {
+            margin-top: 8px;
+            padding: 6px 14px;
+            font-size: 0.8rem;
+            border-radius: 8px;
+            background: rgba(0, 173, 181, 0.12);
+            color: #7ee8ee;
+            border: 1px solid rgba(0, 173, 181, 0.35);
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+        }
+
+        .read-more-btn:hover {
+            background: rgba(0, 173, 181, 0.22);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 173, 181, 0.15);
+        }
+
+        .results-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .card--result {
+            cursor: default;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.22);
+        }
+
+        .card--result:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 14px 32px rgba(0, 0, 0, 0.38);
+            border-color: rgba(255, 255, 255, 0.18);
+            background: var(--card-hover);
+        }
+
+        .timeline-item--plan {
+            padding: 18px 18px 16px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.22);
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s, border-color 0.25s, background 0.25s;
+        }
+
+        .timeline-item--plan:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+            border-color: rgba(255, 255, 255, 0.18);
+            background: var(--card-hover);
+        }
+
+        .result-card-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: flex-start;
+            margin-bottom: 4px;
+        }
+
+        .result-card-head .card-title {
+            margin-bottom: 0;
+            flex: 1;
+        }
+
+        .score-pill {
+            color: var(--success);
+            font-weight: 700;
+            white-space: nowrap;
+            font-size: 0.9rem;
+        }
+
+        .timeline-meta {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .btn-roadmap {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 14px;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-decoration: none;
+            color: #fff;
+            background: linear-gradient(135deg, rgba(0, 173, 181, 0.4), rgba(0, 173, 181, 0.12));
+            border: 1px solid rgba(0, 173, 181, 0.55);
+            transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+        }
+
+        .btn-roadmap:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(0, 173, 181, 0.28);
+            background: linear-gradient(135deg, rgba(0, 173, 181, 0.55), rgba(0, 173, 181, 0.2));
+        }
+
         /* Toast */
         .toast {
             position: fixed;
@@ -540,7 +655,7 @@
                 <div class="results-layout">
                     <div class="result-panel">
                         <h3>📚 AI Recommendations</h3>
-                        <div id="recsList" style="display: flex; flex-direction: column; gap: 15px;"></div>
+                        <div id="recsList" class="results-stack"></div>
                     </div>
 
                     <div class="result-panel">
@@ -594,7 +709,11 @@
             const cat = document.getElementById('categorySelect').value;
             
             const filtered = allCourses.filter(c => {
-                const matchQ = c.course_name.toLowerCase().includes(q) || (c.tags && c.tags.some(t => t.includes(q)));
+                const desc = (getCourseDescription(c) || '').toLowerCase();
+                const matchQ =
+                    c.course_name.toLowerCase().includes(q) ||
+                    (c.tags && c.tags.some(t => t.includes(q))) ||
+                    desc.includes(q);
                 const matchC = cat === "" || c.category === cat;
                 return matchQ && matchC;
             });
@@ -610,33 +729,80 @@
             return String(raw).trim();
         }
 
-        function escapeAttr(text) {
-            return String(text)
-                .replace(/&/g, '&amp;')
-                .replace(/"/g, '&quot;')
-                .replace(/</g, '&lt;');
+        function safeRoadmapUrl(url) {
+            const s = String(url || '').trim();
+            if (!s) return '';
+            try {
+                const u = new URL(s, window.location.origin);
+                if (u.protocol === 'http:' || u.protocol === 'https:') return u.href;
+            } catch (_) { /* ignore */ }
+            return '';
+        }
+
+        function attachExpandableDescription(container, text) {
+            const full = (text || '').trim() || 'No description available.';
+            const p = document.createElement('p');
+            p.className = 'card-desc';
+            p.textContent = full;
+
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'read-more-btn';
+            btn.textContent = 'Read more';
+            btn.hidden = true;
+
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const expanded = p.classList.toggle('is-expanded');
+                btn.textContent = expanded ? 'Read less' : 'Read more';
+            });
+
+            container.appendChild(p);
+            container.appendChild(btn);
+
+            requestAnimationFrame(() => {
+                btn.hidden = p.scrollHeight <= p.clientHeight + 2;
+            });
         }
 
         function renderCourses(courses) {
             const grid = document.getElementById('courseGrid');
             grid.innerHTML = '';
-            
+
             courses.forEach(c => {
                 const isSelected = selectedCourses.has(c.course_id);
                 const card = document.createElement('div');
                 card.className = `card ${isSelected ? 'selected' : ''}`;
-                card.onclick = () => toggleCourse(c.course_id, card);
-                card.title =
-                    getCourseDescription(c) || 'No description available.';
-                
-                let tagsHtml = `<span class="tag cat">${c.category}</span>`;
-                tagsHtml += `<span class="tag diff-${c.difficulty}">${c.difficulty}</span>`;
-                
-                card.innerHTML = `
-                    <div class="card-title">${c.course_name}</div>
-                    <div style="font-size: 0.85rem; color: var(--text-muted);">${c.duration_hours} hours</div>
-                    <div class="tags">${tagsHtml}</div>
-                `;
+                card.addEventListener('click', (e) => {
+                    if (e.target.closest('.read-more-btn')) return;
+                    toggleCourse(c.course_id, card);
+                });
+
+                const title = document.createElement('div');
+                title.className = 'card-title';
+                title.textContent = c.course_name;
+
+                const meta = document.createElement('div');
+                meta.style.fontSize = '0.85rem';
+                meta.style.color = 'var(--text-muted)';
+                meta.textContent = `${c.duration_hours} hours`;
+
+                const tagsWrap = document.createElement('div');
+                tagsWrap.className = 'tags';
+                const catTag = document.createElement('span');
+                catTag.className = 'tag cat';
+                catTag.textContent = c.category;
+                const diffTag = document.createElement('span');
+                diffTag.className = `tag diff-${c.difficulty}`;
+                diffTag.textContent = c.difficulty;
+                tagsWrap.appendChild(catTag);
+                tagsWrap.appendChild(diffTag);
+
+                card.appendChild(title);
+                card.appendChild(meta);
+                attachExpandableDescription(card, getCourseDescription(c));
+                card.appendChild(tagsWrap);
+
                 grid.appendChild(card);
             });
         }
@@ -729,51 +895,107 @@
         function renderResults(recs, path) {
             const recsList = document.getElementById('recsList');
             const timeline = document.getElementById('timelineList');
-            
+
             recsList.innerHTML = '';
             timeline.innerHTML = '';
 
-            // Recommendations
-            if(recs.length === 0) {
-                recsList.innerHTML = '<p>No recommendations found.</p>';
+            if (recs.length === 0) {
+                const empty = document.createElement('p');
+                empty.textContent = 'No recommendations found.';
+                empty.style.color = 'var(--text-muted)';
+                recsList.appendChild(empty);
             } else {
                 recs.forEach(c => {
-                    const tip = escapeAttr(
-                        getCourseDescription(c) ||
-                            'No description available.'
-                    );
-                    recsList.innerHTML += `
-                        <div class="card" style="cursor: default; transform: none;" title="${tip}">
-                            <div style="display: flex; justify-content: space-between;">
-                                <div class="card-title" style="margin-bottom: 5px;">${c.course_name}</div>
-                                <div style="color: var(--success); font-weight: bold;">Score: ${(c.relevance_score * 100).toFixed(0)}</div>
-                            </div>
-                            <div class="tags">
-                                <span class="tag cat">${c.category}</span>
-                                <span class="tag diff-${c.difficulty}">${c.difficulty}</span>
-                            </div>
-                        </div>
-                    `;
+                    const card = document.createElement('div');
+                    card.className = 'card card--result';
+
+                    const head = document.createElement('div');
+                    head.className = 'result-card-head';
+
+                    const title = document.createElement('div');
+                    title.className = 'card-title';
+                    title.textContent = c.course_name;
+
+                    const score = document.createElement('div');
+                    score.className = 'score-pill';
+                    score.textContent = `Score: ${(c.relevance_score * 100).toFixed(0)}`;
+
+                    head.appendChild(title);
+                    head.appendChild(score);
+                    card.appendChild(head);
+
+                    attachExpandableDescription(card, getCourseDescription(c));
+
+                    const tags = document.createElement('div');
+                    tags.className = 'tags';
+                    const cat = document.createElement('span');
+                    cat.className = 'tag cat';
+                    cat.textContent = c.category;
+                    const diff = document.createElement('span');
+                    diff.className = `tag diff-${c.difficulty}`;
+                    diff.textContent = c.difficulty;
+                    tags.appendChild(cat);
+                    tags.appendChild(diff);
+                    card.appendChild(tags);
+
+                    recsList.appendChild(card);
                 });
             }
 
-            // Timeline
-            if(path.length === 0) {
-                timeline.innerHTML = '<p>No timeline generated.</p>';
+            if (path.length === 0) {
+                const empty = document.createElement('p');
+                empty.textContent = 'No timeline generated.';
+                empty.style.color = 'var(--text-muted)';
+                timeline.appendChild(empty);
             } else {
                 path.forEach(item => {
-                    const tip = escapeAttr(
-                        getCourseDescription(item) ||
-                            'No description available.'
-                    );
-                    timeline.innerHTML += `
-                        <div class="timeline-item" title="${tip}">
-                            <div class="week-badge">Week ${item.week_start} - ${item.week_end}</div>
-                            <div style="font-weight: 600; font-size: 1.1rem; margin-bottom: 5px;">${item.course_name}</div>
-                            <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 10px;">${item.duration_hrs} hours estimated</div>
-                            <span class="tag diff-${item.difficulty}">${item.difficulty}</span>
-                        </div>
-                    `;
+                    const block = document.createElement('div');
+                    block.className = 'timeline-item timeline-item--plan';
+
+                    const badge = document.createElement('div');
+                    badge.className = 'week-badge';
+                    badge.textContent = `Week ${item.week_start} - ${item.week_end}`;
+
+                    const cname = document.createElement('div');
+                    cname.style.fontWeight = '600';
+                    cname.style.fontSize = '1.1rem';
+                    cname.style.marginBottom = '6px';
+                    cname.textContent = item.course_name;
+
+                    const meta = document.createElement('div');
+                    meta.className = 'timeline-meta';
+                    meta.textContent = `${item.duration_hrs} hours estimated`;
+
+                    block.appendChild(badge);
+                    block.appendChild(cname);
+                    block.appendChild(meta);
+
+                    attachExpandableDescription(block, getCourseDescription(item));
+
+                    const tags = document.createElement('div');
+                    tags.className = 'tags';
+                    const cat = document.createElement('span');
+                    cat.className = 'tag cat';
+                    cat.textContent = item.category;
+                    const diff = document.createElement('span');
+                    diff.className = `tag diff-${item.difficulty}`;
+                    diff.textContent = item.difficulty;
+                    tags.appendChild(cat);
+                    tags.appendChild(diff);
+                    block.appendChild(tags);
+
+                    const url = safeRoadmapUrl(item.roadmap_url);
+                    if (url) {
+                        const link = document.createElement('a');
+                        link.className = 'btn-roadmap';
+                        link.href = url;
+                        link.target = '_blank';
+                        link.rel = 'noopener noreferrer';
+                        link.textContent = '🗺 View Roadmap';
+                        block.appendChild(link);
+                    }
+
+                    timeline.appendChild(block);
                 });
             }
         }
